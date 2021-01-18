@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishTrimmed>true</PublishTrimmed>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
+    <PackageId>DWABench</PackageId>
+    <Product>DWABench</Product>
+    <Company />
+    <Authors>Przemysław Łukawski</Authors>
+    <Description>.NET Web API benchmarking tool</Description>
+    <AssemblyName>DWABench</AssemblyName>
+    <ApplicationIcon>DWABench.ico</ApplicationIcon>
+    <Version>1.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="19.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="5.0.1" />
+    <PackageReference Include="NReco.Logging.File" Version="1.1.1" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DotnetWebApiBench.ApiClient\DotnetWebApiBench.ApiClient.csproj" />
+    <ProjectReference Include="..\DotnetWebApiBench.Api\DotnetWebApiBench.Api.csproj" />
+  </ItemGroup>
+
+</Project>

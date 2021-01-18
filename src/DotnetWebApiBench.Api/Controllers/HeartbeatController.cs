@@ -1,6 +1,5 @@
-MIT License
-
-Copyright (c) 2020-2021 Przemysław Łukawski
+﻿/*
+Copyright(c) 2020-2021 Przemysław Łukawski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +18,31 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+
+namespace DotnetWebApiBench.Api.Controllers
+{
+    [ApiController]
+    [Route("[controller]")]
+    public class HeartbeatController : BaseController
+    {
+        private readonly ILogger<HeartbeatController> _logger;
+
+        public HeartbeatController(ILogger<HeartbeatController> logger)
+        {
+            _logger = logger;
+        }
+
+        [AllowAnonymous]
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(new { currentTime= DateTimeOffset.Now });
+        }
+    }
+}

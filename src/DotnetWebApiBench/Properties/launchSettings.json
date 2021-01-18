@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DotnetWebApiBench": {
+      "commandName": "Project",
+      "commandLineArgs": "/memory=true"
+    }
+  }
+}

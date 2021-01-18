@@ -1,6 +1,5 @@
-MIT License
-
-Copyright (c) 2020-2021 Przemysław Łukawski
+﻿/*
+Copyright(c) 2020-2021 Przemysław Łukawski
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +18,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+*/
+
+using System;
+using System.Diagnostics;
+
+namespace DotnetWebApiBench.Helpers
+{
+    public class ScopeTimeWatcher : IDisposable
+    {
+        private readonly Action<TimeSpan> onScopeEnd;
+        private readonly Stopwatch stopwatch;
+        private bool disposed = false;
+
+        public ScopeTimeWatcher(Action<TimeSpan> onScopeEnd = null)
+        {
+            this.onScopeEnd = onScopeEnd;
+            this.stopwatch = new Stopwatch();
+            this.stopwatch.Start();
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                this.stopwatch.Stop();
+                disposed = true;
+                onScopeEnd?.Invoke(this.stopwatch.Elapsed);
+            }
+        }
+    }
+}
