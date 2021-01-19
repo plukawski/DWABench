@@ -74,6 +74,10 @@ namespace DotnetWebApiBench.Api
                 hostBuilder.ConfigureLogging(logging => 
                 {
                     logging.ClearProviders();
+                    logging
+                    .AddFile($"Logs/Server_{DateTime.UtcNow.ToString("yyyyMMdd_HHmmss")}.txt")
+                    .AddFilter("Microsoft.*", LogLevel.Error)
+                    .AddFilter("System.*", LogLevel.Error);
                 });
             }
 

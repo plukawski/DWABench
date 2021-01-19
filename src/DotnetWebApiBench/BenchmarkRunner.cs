@@ -88,13 +88,16 @@ namespace DotnetWebApiBench
 
             TimeSpan elapsedTime = await phase1.ExecuteScenarioAsync(recordsToInsert);
 
-            int numberOfConcurrentUsers = Environment.ProcessorCount - 1;   //we leave one CPU thread for other tasks - this increases the performance
+            int.TryParse(configuration["phase2-users"], out int numberOfConcurrentUsers);
             int.TryParse(configuration["phase2-seconds"], out int secondsToRun);
             secondsToRun = secondsToRun <= 0 ? DEFAULT_PHASE2_SECONDS : secondsToRun;
+            numberOfConcurrentUsers = numberOfConcurrentUsers <= 0
+                ? Environment.ProcessorCount - 1   //by default we leave one CPU thread for other tasks - this increases the performance
+                : numberOfConcurrentUsers;
 
             int totalRequests = await phase2.ExecuteScenarioAsync(secondsToRun, numberOfConcurrentUsers);
 
-            TestResults testResults = new TestResults()
+            BenchmarkResults testResults = new BenchmarkResults()
             {
                 ExecutionTimeUtc = executionTime.ToString("yyyy-MM-dd HH:mm:ss"),
                 Phase1Time = (decimal)elapsedTime.TotalSeconds,
@@ -207,7 +210,7 @@ namespace DotnetWebApiBench
             return Process.Start(startInfo);
         }
 
-        private void WriteResultsToCsvFile(TestResults testResults)
+        private void WriteResultsToCsvFile(BenchmarkResults testResults)
         {
             using (var stream = File.Open($"Results/DWABench_results_{executionTime.ToString("yyyyMMdd")}.csv", FileMode.Append))
             using (var writer = new StreamWriter(stream))
@@ -219,7 +222,7 @@ namespace DotnetWebApiBench
                     csv.Configuration.HasHeaderRecord = false;
                 }
 
-                csv.WriteRecords(new TestResults[] { testResults });
+                csv.WriteRecords(new BenchmarkResults[] { testResults });
             }
         }
 

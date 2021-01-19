@@ -22,6 +22,7 @@ SOFTWARE.
 
 using DotnetWebApiBench.DataAccess.Entity;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace DotnetWebApiBench.DataAccess
 {
@@ -29,12 +30,14 @@ namespace DotnetWebApiBench.DataAccess
     {
         public NorthwindDatabaseContext()
         {
+            this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
             this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
         }
 
         public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options)
             : base(options)
         {
+            this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
             this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
         }
 

@@ -20,6 +20,7 @@ Here are examples of possible executions with different parameters:
 - `DWABench.exe /memory=true` - will force the benchmark to use SQL database located in RAM instead of a disk
 - `DWABench.exe /phase1-records=20000` - will alter the phase 1 of the benchmark to import 20000 records instead of the default 10000.
 - `DWABench.exe /phase2-seconds=60` - will alter the phase 2 of the benchmark to execute for 60 seconds instead of the default 40.
+- `DWABench.exe /phase2-users=25` - will alter the phase 2 of the benchmark to execute using 25 concurrent users (threads) instead of the default (number of logical cores minus 1).
 - `DWABench.exe /memory=true /phase1-records=20000 /phase2-seconds=60` - will force the benchmark to use database located in RAM instead of a disk and will alter the phase 1 of the benchmark to import 20000 records instead of the default 10000 and will alter the phase 2 of the benchmark to execute for 60 seconds instead of the default 40.
 
 When no parameters are specified the default values for them are used, that is benchmark will store database on a disk, will import 10000 records and will wait 40 seconds in phase 2.
@@ -33,7 +34,7 @@ When no parameters are specified the default values for them are used, that is b
 
 ## Benchmark phases description
 - **Phase 1** - Executes an import of many product records into the database by executing `POST /products` endpoint in the loop. By default it imports 10000 products (configurable using command line parameter). The results of that phase can be used to directly compare the disk and IO subsystem performance for **SQL database related workloads** which forces the unbuffered writes to the disk to achieve durability.
-- **Phase 2** - Executes typical user scenario for a web shop (3 product searches, adding a new order and getting list of orders) in a loop using number of threads which is equal to number of logical cores minus one in a given time period (defaults to 40 seconds). The results of that phase can be used to directly compare CPU and RAM performance for **webapi server and client related workloads**.
+- **Phase 2** - Executes typical user scenario for a web shop (3 product searches, adding a new order and getting list of orders) in a loop using number of threads which is equal by default to the number of logical cores minus one in a given time period (defaults to 40 seconds). The results of that phase can be used to directly compare CPU and RAM performance for **webapi server and client related workloads**.
 
 **NOTE:** The benchmark can be run using in memory database by setting parameter `memory` to true (`/memory=true`). In such case the disk will not be touched by the benchmark and it will test only CPU and RAM performance leaving the disk performance unmeasured. This is usefull if you don't want the physical disk performance to affect the results of other resources.
 
