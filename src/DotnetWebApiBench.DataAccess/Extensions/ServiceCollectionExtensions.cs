@@ -33,13 +33,18 @@ namespace DotnetWebApiBench.DataAccess.Extensions
     {
         private static DbConnection dbConnection;
         public static void AddNorthwindDataAccess(this IServiceCollection services, 
-            string connectionString)
+            string connectionString, string serverType)
         {
-            var options = new DbContextOptionsBuilder<NorthwindDatabaseContext>()
-                    .UseSqlite(connectionString)
+            var options = new DbContextOptionsBuilder<NorthwindDatabaseContext>().UseSqlite(connectionString)
                     .Options;
 
-            services.AddScoped<NorthwindDatabaseContext>((ctx) => new NorthwindDatabaseContext(options));
+            if (serverType != null && serverType.Equals("SQLServer", System.StringComparison.InvariantCultureIgnoreCase)) {
+                     options = new DbContextOptionsBuilder<NorthwindDatabaseContext>()
+                    .UseSqlServer(connectionString)
+                    .Options;
+            }
+
+                services.AddScoped<NorthwindDatabaseContext>((ctx) => new NorthwindDatabaseContext(options, serverType));
 
             if (connectionString.Contains("memory", System.StringComparison.InvariantCultureIgnoreCase))
             {
@@ -51,7 +56,7 @@ namespace DotnetWebApiBench.DataAccess.Extensions
             }
 
             //we must generate critical data in the database (customers, categories, etc.)
-            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(new NorthwindDatabaseContext(options));
+            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(new NorthwindDatabaseContext(options, serverType));
             dataGenerator.GenerateTestDataAsync().Wait();
 
             services.AddTransient<IProductDao, ProductDao>();

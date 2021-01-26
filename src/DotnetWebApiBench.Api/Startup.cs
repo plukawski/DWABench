@@ -57,8 +57,8 @@ namespace DotnetWebApiBench.Api
                 .AddFluentValidation(fv =>
                 {
                     fv.RegisterValidatorsFromAssemblyContaining<ProductsController>();
-                });
-            services.AddNorthwindDataAccess(Configuration["ConnectionStrings:Northwind"]);
+                }); 
+            services.AddNorthwindDataAccess(Configuration["ConnectionStrings:Northwind"], Configuration["serverType"]); 
             services.AddDotnetWebApiBenchAuthentication();
             services.AddMemoryCache();
 
