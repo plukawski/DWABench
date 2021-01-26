@@ -168,7 +168,7 @@ namespace DotnetWebApiBench
             }
             string connectionString = "";
             
-            if (configuration["serverType"] != null && configuration["serverType"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
             {
                 connectionString = $"Data Source={configuration["DBAdress"]};initial catalog={configuration["DBName"]};user id={configuration["DBUserName"]};password={configuration["DBPassword"]};";
             }
@@ -208,9 +208,9 @@ namespace DotnetWebApiBench
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "DotnetWebApiBench.Api.exe";
-            if (configuration["serverType"] != null && configuration["serverType"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
             { 
-                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\" /serverType={configuration["serverType"]}"; 
+                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\" /db-type={configuration["db-type"]}"; 
             }
             else 
             { 

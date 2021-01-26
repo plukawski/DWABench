@@ -38,6 +38,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using DotnetWebApiBench.DataAccess.Enums;
 
 namespace DotnetWebApiBench.Api
 {
@@ -57,8 +58,20 @@ namespace DotnetWebApiBench.Api
                 .AddFluentValidation(fv =>
                 {
                     fv.RegisterValidatorsFromAssemblyContaining<ProductsController>();
-                }); 
-            services.AddNorthwindDataAccess(Configuration["ConnectionStrings:Northwind"], Configuration["serverType"]); 
+                });
+            DbTypeEnum dbtype;
+            if (Enum.TryParse(Configuration["db-type"], out dbtype))
+            {
+                switch (dbtype) 
+                { 
+                    case DbTypeEnum.SQLServer : 
+                        services.AddNorthwindDataAccess(Configuration["ConnectionStrings:Northwind"], DbTypeEnum.SQLServer); 
+                        break;
+                    default:
+                        services.AddNorthwindDataAccess(Configuration["ConnectionStrings:Northwind"], DbTypeEnum.SQLite);
+                        break;
+                }
+            }
             services.AddDotnetWebApiBenchAuthentication();
             services.AddMemoryCache();
 

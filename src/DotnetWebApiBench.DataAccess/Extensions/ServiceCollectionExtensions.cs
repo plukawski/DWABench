@@ -22,6 +22,7 @@ SOFTWARE.
 
 using DotnetWebApiBench.DataAccess.Dao;
 using DotnetWebApiBench.DataAccess.DataGenerators;
+using DotnetWebApiBench.DataAccess.Enums;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,18 +34,19 @@ namespace DotnetWebApiBench.DataAccess.Extensions
     {
         private static DbConnection dbConnection;
         public static void AddNorthwindDataAccess(this IServiceCollection services, 
-            string connectionString, string serverType)
+            string connectionString, DbTypeEnum dbtype)
         {
+            //Default behaviour SQLite
             var options = new DbContextOptionsBuilder<NorthwindDatabaseContext>().UseSqlite(connectionString)
                     .Options;
 
-            if (serverType != null && serverType.Equals("SQLServer", System.StringComparison.InvariantCultureIgnoreCase)) {
+            if (dbtype == DbTypeEnum.SQLServer) {
                      options = new DbContextOptionsBuilder<NorthwindDatabaseContext>()
                     .UseSqlServer(connectionString)
                     .Options;
             }
 
-                services.AddScoped<NorthwindDatabaseContext>((ctx) => new NorthwindDatabaseContext(options, serverType));
+                services.AddScoped<NorthwindDatabaseContext>((ctx) => new NorthwindDatabaseContext(options, dbtype));
 
             if (connectionString.Contains("memory", System.StringComparison.InvariantCultureIgnoreCase))
             {
@@ -56,7 +58,7 @@ namespace DotnetWebApiBench.DataAccess.Extensions
             }
 
             //we must generate critical data in the database (customers, categories, etc.)
-            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(new NorthwindDatabaseContext(options, serverType));
+            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(new NorthwindDatabaseContext(options, dbtype));
             dataGenerator.GenerateTestDataAsync().Wait();
 
             services.AddTransient<IProductDao, ProductDao>();

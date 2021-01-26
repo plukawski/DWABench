@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 using DotnetWebApiBench.DataAccess.Entity;
+using DotnetWebApiBench.DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Diagnostics;
@@ -29,19 +30,19 @@ namespace DotnetWebApiBench.DataAccess
 {
     public partial class NorthwindDatabaseContext : DbContext
     {
-        private string serverType;
+        private DbTypeEnum dbtype;
         public NorthwindDatabaseContext()
         {
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
             this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
         }
 
-        public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options, string serverType)
+        public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options, DbTypeEnum dbtype)
             : base(options)
         {
-            this.serverType = serverType;
+            this.dbtype = dbtype;
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
-            if (serverType != null && serverType.Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            if (dbtype == DbTypeEnum.SQLServer)
             {
                 
             } 
@@ -71,9 +72,9 @@ namespace DotnetWebApiBench.DataAccess
         {
             if (!optionsBuilder.IsConfigured)
             {
-                if (serverType != null && serverType.Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+                if (dbtype == DbTypeEnum.SQLServer)
                 {
-                    optionsBuilder.UseSqlServer("Data Source=192.168.10.50;initial catalog=test;user id=developer;password=1234;");
+                    optionsBuilder.UseSqlServer("Data Source=localhost;initial catalog=test;user id=developer;password=1234;");
                 }
                 else 
                 { 
