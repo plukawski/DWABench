@@ -42,14 +42,10 @@ namespace DotnetWebApiBench.DataAccess
         {
             this.dbtype = dbtype;
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
-            if (dbtype == DbTypeEnum.SQLServer)
+            if (dbtype == DbTypeEnum.SQLite)
             {
-                
+                this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
             } 
-            else
-            { 
-                this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL"); 
-            }
             
         }
 
