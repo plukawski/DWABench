@@ -21,24 +21,32 @@ SOFTWARE.
 */
 
 using DotnetWebApiBench.DataAccess.Entity;
+using DotnetWebApiBench.DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 
 namespace DotnetWebApiBench.DataAccess
 {
     public partial class NorthwindDatabaseContext : DbContext
     {
+        private DbTypeEnum dbtype;
         public NorthwindDatabaseContext()
         {
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
             this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
         }
 
-        public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options)
+        public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options, DbTypeEnum dbtype)
             : base(options)
         {
+            this.dbtype = dbtype;
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
-            this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
+            if (dbtype == DbTypeEnum.SQLite)
+            {
+                this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
+            } 
+            
         }
 
         public virtual DbSet<Category> Categories { get; set; }
@@ -60,7 +68,14 @@ namespace DotnetWebApiBench.DataAccess
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite("Data Source=.\\Northwind_small.db;");
+                if (dbtype == DbTypeEnum.SQLServer)
+                {
+                    optionsBuilder.UseSqlServer("Data Source=localhost;initial catalog=test;user id=developer;password=1234;");
+                }
+                else 
+                { 
+                    optionsBuilder.UseSqlite("Data Source=.\\Northwind_small.db;");
+                }
             }
         }
 
@@ -178,7 +193,7 @@ namespace DotnetWebApiBench.DataAccess
 
                 entity.Property(e => e.Freight)
                     .IsRequired()
-                    .HasColumnType("DECIMAL");
+                    .HasColumnType("FLOAT");
 
                 entity.Property(e => e.OrderDate).HasColumnType("VARCHAR(8000)");
 
@@ -205,11 +220,11 @@ namespace DotnetWebApiBench.DataAccess
 
                 entity.Property(e => e.Id).HasColumnType("VARCHAR(8000)");
 
-                entity.Property(e => e.Discount).HasColumnType("DOUBLE");
+                entity.Property(e => e.Discount).HasColumnType("FLOAT");
 
                 entity.Property(e => e.UnitPrice)
                     .IsRequired()
-                    .HasColumnType("DECIMAL");
+                    .HasColumnType("FLOAT");
             });
 
             modelBuilder.Entity<Product>(entity =>
@@ -224,7 +239,7 @@ namespace DotnetWebApiBench.DataAccess
 
                 entity.Property(e => e.UnitPrice)
                     .IsRequired()
-                    .HasColumnType("DECIMAL");
+                    .HasColumnType("FLOAT");
             });
 
             modelBuilder.Entity<ProductDetailsV>(entity =>
@@ -245,7 +260,7 @@ namespace DotnetWebApiBench.DataAccess
 
                 entity.Property(e => e.SupplierRegion).HasColumnType("VARCHAR(8000)");
 
-                entity.Property(e => e.UnitPrice).HasColumnType("DECIMAL");
+                entity.Property(e => e.UnitPrice).HasColumnType("FLOAT");
             });
 
             modelBuilder.Entity<Region>(entity =>

@@ -166,13 +166,20 @@ namespace DotnetWebApiBench
             {
                 File.Delete(dbFilePath);
             }
-
-            string connectionString = $"Data Source={dbFilePath};Cache=Shared";
-            if (configuration["memory"]?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+            string connectionString = "";
+            
+            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
             {
-                connectionString = IN_MEMORY_DATABASE_CONN_STRING;
+                connectionString = $"Data Source={configuration["DBAdress"]};initial catalog={configuration["DBName"]};user id={configuration["DBUserName"]};password={configuration["DBPassword"]};";
             }
-
+            else 
+            { 
+                connectionString = $"Data Source={dbFilePath};Cache=Shared";
+                if (configuration["memory"]?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+                {
+                    connectionString = IN_MEMORY_DATABASE_CONN_STRING;
+                }
+            }
             logger.LogInformation($"Database connection string: {connectionString}");
             return connectionString;
         }
@@ -201,7 +208,14 @@ namespace DotnetWebApiBench
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "DotnetWebApiBench.Api.exe";
-            startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\"";
+            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            { 
+                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\" /db-type={configuration["db-type"]}"; 
+            }
+            else 
+            { 
+                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\""; 
+            }
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
             startInfo.UseShellExecute = false;
