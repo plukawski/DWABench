@@ -13,7 +13,7 @@
     <Description>.NET Web API benchmarking tool</Description>
     <AssemblyName>DWABench</AssemblyName>
     <ApplicationIcon>DWABench.ico</ApplicationIcon>
-    <Version>1.1</Version>
+    <Version>1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

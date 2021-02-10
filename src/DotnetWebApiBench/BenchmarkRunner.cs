@@ -24,9 +24,10 @@ using CsvHelper;
 using DotnetWebApiBench.ApiClient.Interfaces;
 using DotnetWebApiBench.Helpers;
 using DotnetWebApiBench.Models;
+using DotnetWebApiBench.Models.Config;
 using DotnetWebApiBench.Scenarios;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -39,14 +40,12 @@ namespace DotnetWebApiBench
     internal class BenchmarkRunner : IDisposable
     {
         public const string IN_MEMORY_DATABASE_CONN_STRING = "Data Source=NorthwindInMemory;Mode=Memory;Cache=Shared";
-        private const int DEFAULT_PHASE1_RECORDS = 10000;
-        private const int DEFAULT_PHASE2_SECONDS = 40;
 
         private readonly ILogger<BenchmarkRunner> logger;
         private readonly Phase1Scenario phase1;
         private readonly Phase2Scenario phase2;
         private readonly IHeartbeatClient heartbeatClient;
-        private readonly IConfiguration configuration;
+        private readonly BenchmarkSettings settings;
         private Process server;
         private DateTime executionTime = DateTime.UtcNow;
 
@@ -54,14 +53,14 @@ namespace DotnetWebApiBench
             Phase1Scenario phase1,
             Phase2Scenario phase2,
             IHeartbeatClient heartbeatClient,
-            IConfiguration configuration)
+            IOptions<BenchmarkSettings> options)
         {
             ;
             this.logger = logger;
             this.phase1 = phase1;
             this.phase2 = phase2;
             this.heartbeatClient = heartbeatClient;
-            this.configuration = configuration;
+            this.settings = options.Value;
         }
 
         public async Task RunBenchmarkAsync(string hostHttpsUrl, int httpsPort, DateTime executionTime)
@@ -83,14 +82,14 @@ namespace DotnetWebApiBench
                 return;
             }
 
-            int.TryParse(configuration["phase1-records"], out int recordsToInsert);
-            recordsToInsert = recordsToInsert <= 0 ? DEFAULT_PHASE1_RECORDS : recordsToInsert;
+            int recordsToInsert = settings.Phase1Rescords;
+            recordsToInsert = recordsToInsert <= 0 ? BenchmarkSettings.DEFAULT_PHASE1_RECORDS : recordsToInsert;
 
             TimeSpan elapsedTime = await phase1.ExecuteScenarioAsync(recordsToInsert);
 
-            int.TryParse(configuration["phase2-users"], out int numberOfConcurrentUsers);
-            int.TryParse(configuration["phase2-seconds"], out int secondsToRun);
-            secondsToRun = secondsToRun <= 0 ? DEFAULT_PHASE2_SECONDS : secondsToRun;
+            int numberOfConcurrentUsers = settings.Phase2Users;
+            int secondsToRun = settings.Phase2Seconds;
+            secondsToRun = secondsToRun <= 0 ? BenchmarkSettings.DEFAULT_PHASE2_SECONDS : secondsToRun;
             numberOfConcurrentUsers = numberOfConcurrentUsers <= 0
                 ? Environment.ProcessorCount - 1   //by default we leave one CPU thread for other tasks - this increases the performance
                 : numberOfConcurrentUsers;
@@ -150,12 +149,15 @@ namespace DotnetWebApiBench
 
                 logger.LogInformation("\r\nDisk Information:");
                 logger.LogInformation(HardwareInformationHelper.GetDiskModel(Environment.CurrentDirectory.First()));
-                logger.LogInformation("--------------Hardware information----------------");
-                logger.LogInformation(string.Empty);
             }
             catch (Exception ex)
             {
                 logger.LogError($"Unable to obtain full hardware information: {ex.Message}");
+            }
+            finally 
+            {
+                logger.LogInformation("--------------Hardware information----------------");
+                logger.LogInformation(string.Empty);
             }
         }
 
@@ -166,20 +168,31 @@ namespace DotnetWebApiBench
             {
                 File.Delete(dbFilePath);
             }
-            string connectionString = "";
+            string connectionString = string.Empty;
             
-            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            if (settings.DatabaseType == DataAccess.Enums.DbTypeEnum.SQLServer)
             {
-                connectionString = $"Data Source={configuration["DBAdress"]};initial catalog={configuration["DBName"]};user id={configuration["DBUserName"]};password={configuration["DBPassword"]};";
+                connectionString = $"Server={settings.DbServer};Database={settings.DbName};Trusted_Connection=True;";
+                if (!string.IsNullOrWhiteSpace(settings.DbUserName)
+                    && !string.IsNullOrWhiteSpace(settings.DbPassword))
+                {
+                    connectionString = $"Data Source={settings.DbServer};initial catalog={settings.DbName};user id={settings.DbUserName};password={settings.DbPassword};";
+                }
             }
             else 
             { 
                 connectionString = $"Data Source={dbFilePath};Cache=Shared";
-                if (configuration["memory"]?.Equals("true", StringComparison.InvariantCultureIgnoreCase) == true)
+                if (settings.UseMemoryDatabase)
                 {
                     connectionString = IN_MEMORY_DATABASE_CONN_STRING;
                 }
             }
+
+            if (!string.IsNullOrWhiteSpace(settings.DbConnectionString))
+            {
+                connectionString = settings.DbConnectionString;
+            }
+
             logger.LogInformation($"Database connection string: {connectionString}");
             return connectionString;
         }
@@ -208,9 +221,9 @@ namespace DotnetWebApiBench
         {
             ProcessStartInfo startInfo = new ProcessStartInfo();
             startInfo.FileName = "DotnetWebApiBench.Api.exe";
-            if (configuration["db-type"] != null && configuration["db-type"].Equals("SQLServer", StringComparison.InvariantCultureIgnoreCase))
+            if (settings.DatabaseType == DataAccess.Enums.DbTypeEnum.SQLServer)
             { 
-                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\" /db-type={configuration["db-type"]}"; 
+                startInfo.Arguments = $"{httpsPort} /ConnectionStrings:Northwind=\"{connectionString}\" /db-type={settings.DatabaseType}"; 
             }
             else 
             { 

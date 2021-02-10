@@ -21,6 +21,9 @@ Here are examples of possible executions with different parameters:
 - `DWABench.exe /phase1-records=20000` - will alter the phase 1 of the benchmark to import 20000 records instead of the default 10000.
 - `DWABench.exe /phase2-seconds=60` - will alter the phase 2 of the benchmark to execute for 60 seconds instead of the default 40.
 - `DWABench.exe /phase2-users=25` - will alter the phase 2 of the benchmark to execute using 25 concurrent users (threads) instead of the default (number of logical cores minus 1).
+- `DWABench.exe /db-type=SQLServer` - will alter the database type used to `SQLServer` instead of the default `SQLite`. Possible values: `SQLServer` or `SQLite`. For `SQLServer` it will try to connect to local SQL Server instance by default using windows authentication.
+- `DWABench.exe /db-connectionstring=<connectiong_string>` - will alter the database full connection string used. IMPORTANT: It must be compatible with the database type used.
+- `DWABench.exe /db-address=127.0.0.1 /db-name=DWABench /db-username=dbuser /db-password=pass` - will alter the database connection parameters.
 - `DWABench.exe /memory=true /phase1-records=20000 /phase2-seconds=60` - will force the benchmark to use database located in RAM instead of a disk and will alter the phase 1 of the benchmark to import 20000 records instead of the default 10000 and will alter the phase 2 of the benchmark to execute for 60 seconds instead of the default 40.
 
 When no parameters are specified the default values for them are used, that is benchmark will store database on a disk, will import 10000 records and will wait 40 seconds in phase 2.
