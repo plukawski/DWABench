@@ -75,6 +75,10 @@ namespace DotnetWebApiBench.Scenarios
             {
                 await Task.WhenAll(tasks);
             }
+            catch (OperationCanceledException)
+            {
+                //do nothing - the benchmark phase has ended
+            }
             catch (Exception ex)
             {
                 ErrorsOccured = true;
