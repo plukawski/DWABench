@@ -23,6 +23,7 @@ SOFTWARE.
 using DotnetWebApiBench.ApiClient.Authentication;
 using DotnetWebApiBench.ApiClient.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Polly;
 using Refit;
 using System;
 using System.Collections.Generic;
@@ -53,7 +54,9 @@ namespace DotnetWebApiBench.ApiClient.Extensions
                 {
                     client.BaseAddress = new Uri(apiAddress);
                 })
-                .AddHttpMessageHandler<AuthenticationHandler>();
+                .AddHttpMessageHandler<AuthenticationHandler>()
+                .AddTransientHttpErrorPolicy(builder => builder.WaitAndRetryAsync(1, 
+                    _ => TimeSpan.FromMilliseconds(100)));
 
                 if (allowInvalidCerts)
                 {

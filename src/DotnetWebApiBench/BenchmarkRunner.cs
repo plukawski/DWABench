@@ -21,6 +21,7 @@ SOFTWARE.
 */
 
 using CsvHelper;
+using CsvHelper.Configuration;
 using DotnetWebApiBench.ApiClient.Interfaces;
 using DotnetWebApiBench.Helpers;
 using DotnetWebApiBench.Models;
@@ -241,14 +242,11 @@ namespace DotnetWebApiBench
         {
             using (var stream = File.Open($"Results/DWABench_results_{executionTime.ToString("yyyyMMdd")}.csv", FileMode.Append))
             using (var writer = new StreamWriter(stream))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            using (var csv = new CsvWriter(writer, new CsvConfiguration(CultureInfo.InvariantCulture) 
+            { 
+                HasHeaderRecord = stream.Length == 0    //write header only if stream is empty
+            }))
             {
-                if (stream.Length > 0)
-                {
-                    // Don't write the header again.
-                    csv.Configuration.HasHeaderRecord = false;
-                }
-
                 csv.WriteRecords(new BenchmarkResults[] { testResults });
             }
         }
