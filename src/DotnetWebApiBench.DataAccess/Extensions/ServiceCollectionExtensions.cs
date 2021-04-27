@@ -41,7 +41,7 @@ namespace DotnetWebApiBench.DataAccess.Extensions
                     .Options;
 
             if (dbtype == DbTypeEnum.SQLServer) {
-                     options = new DbContextOptionsBuilder<NorthwindDatabaseContext>()
+                options = new DbContextOptionsBuilder<NorthwindDatabaseContext>()
                     .UseSqlServer(connectionString)
                     .Options;
             }
@@ -58,7 +58,8 @@ namespace DotnetWebApiBench.DataAccess.Extensions
             }
 
             //we must generate critical data in the database (customers, categories, etc.)
-            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(new NorthwindDatabaseContext(options, dbtype));
+            using var generatorContext = new NorthwindDatabaseContext(options, dbtype);
+            CriticalDataGenerator dataGenerator = new CriticalDataGenerator(generatorContext);
             dataGenerator.GenerateTestDataAsync().Wait();
 
             services.AddTransient<IProductDao, ProductDao>();
