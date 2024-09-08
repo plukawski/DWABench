@@ -39,6 +39,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using DotnetWebApiBench.DataAccess.Enums;
+using FluentValidation;
 
 namespace DotnetWebApiBench.Api
 {
@@ -54,11 +55,10 @@ namespace DotnetWebApiBench.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public virtual void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddFluentValidation(fv =>
-                {
-                    fv.RegisterValidatorsFromAssemblyContaining<ProductsController>();
-                });
+            services.AddControllers();
+            services.AddFluentValidationAutoValidation()
+                .AddValidatorsFromAssemblyContaining<ProductsController>()
+                .AddFluentValidationClientsideAdapters();
             DbTypeEnum dbtype;
             if (Enum.TryParse(Configuration["db-type"], out dbtype))
             {

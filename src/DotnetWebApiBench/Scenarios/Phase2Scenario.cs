@@ -68,7 +68,7 @@ namespace DotnetWebApiBench.Scenarios
 
             for (int i = 0; i < numberOfConcurrentUsers; i++)
             {
-                tasks.Add(DoSingleUserWorkAsync(phase2CancellationTokenSource.Token));
+                tasks.Add(DoSingleUserWorkAsync(i, phase2CancellationTokenSource.Token));
             }
 
             try
@@ -91,12 +91,11 @@ namespace DotnetWebApiBench.Scenarios
             return totalRequests;
         }
 
-        protected virtual async Task DoSingleUserWorkAsync(CancellationToken cancellationToken)
+        protected virtual async Task DoSingleUserWorkAsync(int customerIndex, CancellationToken cancellationToken)
         {
             int iteration = 0;
-            var random = new Random();
             var customers = await customersClient.GetCustomersAsync();
-            var customer = customers.ElementAt(random.Next(1, customers.Count()));
+            var customer = customers.ElementAt(customerIndex % customers.Count());
             Interlocked.Increment(ref totalRequests);
 
             while (!cancellationToken.IsCancellationRequested)
