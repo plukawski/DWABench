@@ -23,6 +23,7 @@ SOFTWARE.
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NReco.Logging.File;
 using System;
 using System.Linq;
 using System.Net;

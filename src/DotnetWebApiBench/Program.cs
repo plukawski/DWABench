@@ -31,6 +31,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using NReco.Logging.File;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -152,7 +153,7 @@ namespace DotnetWebApiBench
             Console.WriteLine();
             Console.WriteLine("memory              When set to true will use database located in memory instead of disk. Defaults to false.");
             Console.WriteLine("phase1-records      Specifies number of records to generate in phase 1. Defaults to 10000");
-            Console.WriteLine("phase2-seconds      Specifies number of seconds phase 2 should take. Defaults to 20");
+            Console.WriteLine("phase2-seconds      Specifies number of seconds phase 2 should take. Defaults to 40");
             Console.WriteLine("phase2-users        Specifies number of concurrent users in phase 2. Defaults to logical cores minus one");
             Console.WriteLine("db-type             Specifies type of the database (SQLServer or SQLite). Defaults to SQLite");
             Console.WriteLine("db-connectionstring Specifies full connection string to the database.");
