@@ -1,6 +1,6 @@
 # DWABench - .NET Web API benchmarking tool.
 
-**DWABench** is a real-world Windows based benchmarking tool that evaluates computer's hardware capabilities in regards of WebApi like workloads and SQL database like workloads. It tests not only your CPU, but also memory and disk using workloads that are similiar to the ones found in real web applications based on a `.NET 5` platform.
+**DWABench** is a real-world Windows based benchmarking tool that evaluates computer's hardware capabilities in regards of WebApi like workloads and SQL database like workloads. It tests not only your CPU, but also memory and disk using workloads that are similiar to the ones found in real web applications based on a `.NET 8` platform.
 
 ## Technical Description
 The main goal of this tool is to be as simple as possible - to have a possibility to benchmark any Windows based system for webapi application related workloads without the need of any manual configuration (like setting up WWW server, SQL databases, etc.). It accomplishes that by starting its own www server (the `Kestrel` one) and using `Sqlite` as an SQL database engine which is ACID compliant. As a result the tool is not doing any changes in the system and also does not require any preconfiguration nor admin rights to make it work. Just download the ZIP package, extract it, run a single EXE file and get the results.
@@ -10,7 +10,7 @@ During benchmarking a real HTTPS secure connection on the loopback address is es
 Like the [Cinebench](https://www.maxon.net/en/cinebench) benchmark, which is a benchmark for 3d rendering applications, the goal of this tool was to create a benchmark utilizing webapi application like workloads having similar complexity for the end users (absolutely no manual preconfiguration needed). Cinebench is great to know the maximum theoretical performance only of the processor in the system, however that may not give a clear picture how a particular hardware will behave for workloads used in webapi like applications.
 
 ## Requirements
-Any device or virtual machine with **Windows 7/Windows Server 2008 R2** or newer. It may work on older Windows versions but was not tested.
+Any device or virtual machine with **Windows 10/Windows Server 2012 R2** or newer. It may work on older Windows versions but was not tested.
 
 ## How to use
 Simply extract the ZIP package of the most recent release to a separate folder and run the `DWABench.exe` file. After the benchmark finishes it will create a CSV file with the results for the current day in the `Results` folder. When running the benchmark multiple times on the same day it will append the results to the CSV file automatically.
@@ -29,7 +29,7 @@ Here are examples of possible executions with different parameters:
 When no parameters are specified the default values for them are used, that is benchmark will store database on a disk, will import 10000 records and will wait 40 seconds in phase 2.
 
 ## Main technology stack used in DWABench
-- [Microsoft .NET 5](https://docs.microsoft.com/pl-pl/dotnet/core/dotnet-five)
+- [Microsoft .NET 8](https://learn.microsoft.com/pl-pl/dotnet/core/whats-new/dotnet-8/overview)
 - [Kestrel](https://docs.microsoft.com/pl-pl/aspnet/core/fundamentals/servers/kestrel?view=aspnetcore-5.0) WWW server (spawned in a separate process to the benchmark itself)
 - [Sqlite 3](https://www.sqlite.org/) (Northwind database schema with some sample data taken from [here](https://github.com/jpwhite3/northwind-SQLite3))
 - [IdentityServer4](https://github.com/IdentityServer/IdentityServer4)
@@ -49,6 +49,6 @@ When no parameters are specified the default values for them are used, that is b
 Because this benchmark uses logic which is very similar to the real-world webapi application (real web server, real ACID compliant SQL database, real HTTPS connection with OAuth 2 authentication, etc.) it should be well suited to measure the above aspects of the system hardware.
 
 ## License
-Copyright 2020-2021 Przemysław Łukawski
+Copyright 2020-2024 Przemysław Łukawski
 
 Distributed under the MIT license
