@@ -92,7 +92,7 @@ namespace DotnetWebApiBench
             int secondsToRun = settings.Phase2Seconds;
             secondsToRun = secondsToRun <= 0 ? BenchmarkSettings.DEFAULT_PHASE2_SECONDS : secondsToRun;
             numberOfConcurrentUsers = numberOfConcurrentUsers <= 0
-                ? Environment.ProcessorCount - 1   //by default we leave one CPU thread for other tasks - this increases the performance
+                ? BenchmarkSettings.DEFAULT_PHASE2_USERS   //by default we set this to the number of customers in db
                 : numberOfConcurrentUsers;
 
             int totalRequests = await phase2.ExecuteScenarioAsync(secondsToRun, numberOfConcurrentUsers);

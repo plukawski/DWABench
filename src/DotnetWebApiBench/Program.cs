@@ -131,7 +131,7 @@ namespace DotnetWebApiBench
             {
                 options.Phase1Rescords = Configuration.GetValue<int>("phase1-records", 10000);
                 options.Phase2Seconds = Configuration.GetValue<int>("phase2-seconds", 40);
-                options.Phase2Users = Configuration.GetValue<int>("phase2-users", Environment.ProcessorCount - 1);
+                options.Phase2Users = Configuration.GetValue<int>("phase2-users", 100);
                 options.UseMemoryDatabase = Configuration.GetValue<bool>("memory", false);
                 options.DatabaseType = Enum.Parse<DbTypeEnum>(Configuration.GetValue<string>("db-type", DbTypeEnum.SQLite.ToString()));
                 options.DbName = Configuration.GetValue<string>("db-name", "DWABench_Northwind");
@@ -154,7 +154,7 @@ namespace DotnetWebApiBench
             Console.WriteLine("memory              When set to true will use database located in memory instead of disk. Defaults to false.");
             Console.WriteLine("phase1-records      Specifies number of records to generate in phase 1. Defaults to 10000");
             Console.WriteLine("phase2-seconds      Specifies number of seconds phase 2 should take. Defaults to 40");
-            Console.WriteLine("phase2-users        Specifies number of concurrent users in phase 2. Defaults to logical cores minus one");
+            Console.WriteLine("phase2-users        Specifies number of concurrent users in phase 2. Defaults to 100");
             Console.WriteLine("db-type             Specifies type of the database (SQLServer or SQLite). Defaults to SQLite");
             Console.WriteLine("db-connectionstring Specifies full connection string to the database.");
             Console.WriteLine("db-name             Specifies database name for non SQLite database. Ignored when full connection string is provided.");

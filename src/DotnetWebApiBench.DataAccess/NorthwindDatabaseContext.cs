@@ -24,7 +24,6 @@ using DotnetWebApiBench.DataAccess.Entity;
 using DotnetWebApiBench.DataAccess.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Diagnostics;
 
 namespace DotnetWebApiBench.DataAccess
 {
@@ -34,7 +33,6 @@ namespace DotnetWebApiBench.DataAccess
         public NorthwindDatabaseContext()
         {
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
-            this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
         }
 
         public NorthwindDatabaseContext(DbContextOptions<NorthwindDatabaseContext> options, DbTypeEnum dbtype)
@@ -42,11 +40,6 @@ namespace DotnetWebApiBench.DataAccess
         {
             this.dbtype = dbtype;
             this.Database.SetCommandTimeout(TimeSpan.FromMinutes(2));
-            if (dbtype == DbTypeEnum.SQLite)
-            {
-                this.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL");
-            } 
-            
         }
 
         public virtual DbSet<Category> Categories { get; set; }

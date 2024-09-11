@@ -55,10 +55,12 @@ namespace DotnetWebApiBench.Scenarios
 
         public async Task<int> ExecuteScenarioAsync(int numberOfSecondsToRun, int numberOfConcurrentUsers)
         {
-            CancellationTokenSource phase2CancellationTokenSource = new CancellationTokenSource();
-            phase2CancellationTokenSource.CancelAfter(numberOfSecondsToRun * 1000);
-            List<Task> tasks = new List<Task>();
+            await DoSingleUserWorkAsync(0, CancellationToken.None, isWarmup: true);
 
+            CancellationTokenSource phase2CancellationTokenSource = new CancellationTokenSource();
+            List<Task> tasks = new List<Task>(numberOfConcurrentUsers);
+
+            phase2CancellationTokenSource.CancelAfter(numberOfSecondsToRun * 1000);
             logger.LogInformation($"Phase 2: Executing end user scenario simulating {numberOfConcurrentUsers} concurrent users.");
 
             var watcher = new ScopeTimeWatcher((elapsed) =>
@@ -91,7 +93,9 @@ namespace DotnetWebApiBench.Scenarios
             return totalRequests;
         }
 
-        protected virtual async Task DoSingleUserWorkAsync(int customerIndex, CancellationToken cancellationToken)
+        protected virtual async Task DoSingleUserWorkAsync(int customerIndex,
+            CancellationToken cancellationToken,
+            bool isWarmup = false)
         {
             int iteration = 0;
             var customers = await customersClient.GetCustomersAsync();
@@ -144,6 +148,11 @@ namespace DotnetWebApiBench.Scenarios
                     Interlocked.Increment(ref totalRequests);
                     Interlocked.Increment(ref totalRequests);
                     Interlocked.Increment(ref totalRequests);
+                    if (isWarmup)
+                    {
+                        totalRequests = 0;
+                        break;
+                    }
                 }
                 catch (Exception ex) when (ex is IOException || ex is TaskCanceledException)
                 {

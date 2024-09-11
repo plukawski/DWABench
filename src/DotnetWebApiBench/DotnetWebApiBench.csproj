@@ -6,6 +6,8 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
     <ServerGarbageCollection>true</ServerGarbageCollection>
+	<TieredCompilation>true</TieredCompilation>
+	<TieredCompilationQuickJit>true</TieredCompilationQuickJit>
     <PackageId>DWABench</PackageId>
     <Product>DWABench</Product>
     <Company />
