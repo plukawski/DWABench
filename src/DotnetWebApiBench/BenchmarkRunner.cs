@@ -138,11 +138,8 @@ namespace DotnetWebApiBench
                 logger.LogInformation(string.Empty);
                 logger.LogInformation("--------------Hardware information----------------");
                 logger.LogInformation("CPU Information:");
-                var processorNames = HardwareInformationHelper.GetProcessorName();
-                for (int i = 0; i < processorNames.Count; i++)
-                {
-                    logger.LogInformation($"{i + 1}. {processorNames[i]}");
-                }
+                var processorName = HardwareInformationHelper.GetProcessorName();
+                logger.LogInformation($"{processorName}");
                 logger.LogInformation($"Number of total available logical cores: {Environment.ProcessorCount}");
 
                 logger.LogInformation("\r\nRAM Information:");
