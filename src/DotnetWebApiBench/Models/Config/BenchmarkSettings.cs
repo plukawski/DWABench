@@ -6,10 +6,11 @@ namespace DotnetWebApiBench.Models.Config
     {
         internal const int DEFAULT_PHASE1_RECORDS = 10000;
         internal const int DEFAULT_PHASE2_SECONDS = 40;
+        internal const int DEFAULT_PHASE2_USERS = 100;
 
         public int Phase1Rescords { get; set; } = DEFAULT_PHASE1_RECORDS;
         public int Phase2Seconds { get; set; } = DEFAULT_PHASE2_SECONDS;
-        public int Phase2Users { get; set; }
+        public int Phase2Users { get; set; } = DEFAULT_PHASE2_USERS;
         public bool UseMemoryDatabase { get; set; }
         public DbTypeEnum DatabaseType { get; set; } = DbTypeEnum.SQLite;
         public string DbServer { get; set; } = "localhost";

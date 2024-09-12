@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management;
@@ -28,16 +29,11 @@ namespace DotnetWebApiBench.Helpers
 {
     public class HardwareInformationHelper
     {
-        public static List<string> GetProcessorName()
+        public static string GetProcessorName()
         {
-            List<string> processors = new List<string>();
-            using ManagementObjectSearcher mos = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_Processor");
-            foreach (ManagementObject mo in mos.Get())
-            {
-                processors.Add(mo["Name"].ToString());
-            }
-
-            return processors.Distinct().ToList();
+            string registryKey = @"HKEY_LOCAL_MACHINE\HARDWARE\DESCRIPTION\System\CentralProcessor\0";
+            string valueName = "ProcessorNameString";
+            return (string)Registry.GetValue(registryKey, valueName, "Unknown Processor");
         }
 
         public static string GetDiskModel(char driveLetter)
